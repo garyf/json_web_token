@@ -54,5 +54,24 @@ module JsonWebToken
         end
       end
     end
+
+    context '#unsecured_jws' do
+      let(:payload) { 'payload' }
+      describe 'w matching algorithm' do
+        let(:header) { {alg: 'none'} }
+        it 'verified' do
+          serialized_output = Jws.unsecured_jws(header, payload)
+          expect(Jws.validate serialized_output, 'none').to eql serialized_output
+        end
+      end
+
+      describe 'w/o matching algorithm' do
+        let(:header) { {alg: 'HS256'} }
+        it 'raises' do
+          expect { Jws.unsecured_jws(header, payload) }
+            .to raise_error(RuntimeError, "Invalid 'alg' header parameter")
+        end
+      end
+    end
   end
 end

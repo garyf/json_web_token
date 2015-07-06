@@ -24,6 +24,12 @@ module JsonWebToken
       signature_valid?(jws, algorithm, key) ? jws : 'Invalid'
     end
 
+    # http://tools.ietf.org/html/rfc7515#page-47
+    def unsecured_jws(header, payload)
+      fail("Invalid 'alg' header parameter") unless alg_parameter(header) == 'none'
+      "#{signing_input(header, payload)}." # note trailing '.'
+    end
+
     # private
 
     def alg_parameter(header)
