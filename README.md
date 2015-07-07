@@ -1,9 +1,10 @@
-# JSON web token
+# JSON Web Token
 
-## JSON Web Token implementation for Ruby
+## A JSON Web Token implementation for Ruby
+**Work in progress -- not yet ready for production**
 
 ### Description
-A conforming implementation of the JSON Web Token (JWT) Standards Track [RFC 7519][rfc7519]
+A Ruby implementation of the JSON Web Token (JWT) Standards Track [RFC 7519][rfc7519]
 
 ## Installation
     gem install json_web_token
@@ -13,7 +14,7 @@ A conforming implementation of the JSON Web Token (JWT) Standards Track [RFC 751
 * Clear separation and conformance to underlying standards
   - JSON Web Signature (JWS) Standards Track [RFC 7515][rfc7515]
   - JSON Web Algorithms (JWA) Standards Track [RFC 7518][rfc7518]
-* Comprehensive test coverage
+* Thorough test coverage
 * Modularity for comprehension and extensibility
 * Implement only the REQUIRED elements of the JWT standard (initially)
 
@@ -31,6 +32,7 @@ Create a JSON web token
 
 ```ruby
 require 'json_web_token'
+
 JsonWebToken.create(claims, options)
 ```
 
