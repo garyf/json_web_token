@@ -20,6 +20,12 @@ module JsonWebToken
       Jws.message_signature(header, message, key)
     end
 
+    def validate(jwt, options = {})
+      alg = options[:alg] || ALGORITHM_DEFAULT
+      jws = Jws.validate(jwt, alg, options[:key])
+      jws == 'Invalid' ? jws : Util.symbolize_keys(decoded_message_json_to_hash jws)
+    end
+
     # private
 
     def validated_message(claims)
@@ -37,8 +43,15 @@ module JsonWebToken
       alg && !alg.empty? ? hsh : {}
     end
 
+    def decoded_message_json_to_hash(jws)
+      ary = jws.split('.')
+      return jws unless ary.length > 1 # invalid
+      JSON.parse(Format::Base64Url.decode ary[1])
+    end
+
     private_class_method :validated_message,
       :config_header,
-      :alg_parameter_required
+      :alg_parameter_required,
+      :decoded_message_json_to_hash
   end
 end

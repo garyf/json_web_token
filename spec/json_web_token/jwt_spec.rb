@@ -4,6 +4,13 @@ require 'support/plausible_jwt'
 module JsonWebToken
   describe Jwt do
     context '#create' do
+      shared_examples_for 'w #validate' do
+        it 'verified' do
+          jwt = Jwt.create(claims, options)
+          expect(Jwt.validate jwt, options).to include(claims)
+        end
+      end
+
       shared_examples_for 'return message signature' do
         it 'plausible' do
           serialized_output = Jwt.create(claims, options)
@@ -24,26 +31,31 @@ module JsonWebToken
           let(:key) { 'this_a_32_character_private_key!' }
           describe 'default header' do
             let(:options) { {key: key} }
+            it_behaves_like 'w #validate'
             it_behaves_like 'return message signature'
           end
 
           describe 'passing header parameters' do
             let(:options) { {typ: 'JWT', alg: 'HS256', key: key} }
+            it_behaves_like 'w #validate'
             it_behaves_like 'return message signature'
           end
 
           describe "w 'alg':'none' header parameter" do
             let(:options) { {typ: 'JWT', alg: 'none', key: key} }
+            it_behaves_like 'w #validate'
             it_behaves_like 'return unsecured jws'
           end
 
           describe "w 'alg':'nil' header parameter" do
             let(:options) { {alg: nil, key: key} }
+            it_behaves_like 'w #validate'
             it_behaves_like 'return message signature'
           end
 
           describe "w 'alg':'' header parameter" do
             let(:options) { {alg: nil, key: key} }
+            it_behaves_like 'w #validate'
             it_behaves_like 'return message signature'
           end
         end
@@ -51,6 +63,7 @@ module JsonWebToken
         context 'w/o key' do
           let(:options) { {typ: 'JWT', alg: 'none'} }
           describe "w 'alg':'none' header parameter" do
+            it_behaves_like 'w #validate'
             it_behaves_like 'return unsecured jws'
           end
         end
