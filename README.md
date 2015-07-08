@@ -39,13 +39,13 @@ JsonWebToken.create(claims, options)
 Validate a JSON web token
 
 ```ruby
-JsonWebToken.validate(jwt, options)
+claims = JsonWebToken.validate(jwt, options)
 ```
 ### Supported encryption algorithms
 The 2 REQUIRED JWT algorithms
 
 - HMAC using SHA-256 per [RFC 2104][rfc2104]
-- none (unsecured)
+- 'none' (unsecured)
 
 ### Supported Ruby Versions
 Ruby 2.1 and up
@@ -53,8 +53,8 @@ Ruby 2.1 and up
 ### Limitations
 Future implementation may include these features:
 
-- Representation of a JWT as a JSON Web Encryption (JWE) [RFC 7516][rfc7516]
 - RECOMMENDED or OPTIONAL encryption algorithms
+- Representation of a JWT as a JSON Web Encryption (JWE) [RFC 7516][rfc7516]
 - OPTIONAL nested JWTs
 
 [rfc2104]: http://tools.ietf.org/html/rfc2104

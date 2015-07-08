@@ -17,7 +17,7 @@ module JsonWebToken
         end
       end
 
-      describe 'w/o key', pending: 'key validation' do
+      describe 'w/o key' do
         let(:algorithm) { 'HS256' }
         it 'raises' do
           expect { Jwa.signed(algorithm, nil, valid_data) }
