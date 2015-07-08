@@ -1,3 +1,4 @@
+require 'json_web_token/util'
 require 'openssl'
 
 module JsonWebToken
@@ -19,7 +20,7 @@ module JsonWebToken
 
       def verified?(mac, sha_bits, key, data)
         validate_params(key, sha_bits)
-        mac == signed(sha_bits, key, data)
+        Util.constant_time_compare(mac, signed(sha_bits, key, data))
       end
 
       # private
