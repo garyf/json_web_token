@@ -4,7 +4,9 @@ require 'json_web_token/version'
 
 Gem::Specification.new do |s|
   s.author = 'Gary Fleshman'
+  s.email = 'gf4cl@verizon.net'
   s.files = `git ls-files`.split("\n")
+  s.homepage = 'https://github.com/garyf/json_web_token'
   s.name = 'json_web_token'
   s.platform = Gem::Platform::RUBY
   s.summary = 'JSON Web Token for Ruby'
