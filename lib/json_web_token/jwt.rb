@@ -14,10 +14,9 @@ module JsonWebToken
     # http://tools.ietf.org/html/rfc7519#page-12
     def create(claims, options = {})
       message = validated_message(claims)
-      key = options[:key]
       header = config_header(options)
       return Jws.unsecured_jws(header, message) if header[:alg] == 'none'
-      Jws.message_signature(header, message, key)
+      Jws.message_signature(header, message, options[:key])
     end
 
     def validate(jwt, options = {})
@@ -29,7 +28,7 @@ module JsonWebToken
     # private
 
     def validated_message(claims)
-      fail('Claims not provided') if !claims || claims.empty?
+      fail('Claims blank') if !claims || claims.empty?
       claims.to_json
     end
 

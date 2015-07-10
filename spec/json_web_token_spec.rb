@@ -35,27 +35,9 @@ describe JsonWebToken do
       end
     end
 
-    context 'w/o key' do
-      context "w create alg 'none'" do
-        let(:create_options) { {alg: 'none'} }
-        describe "w validate alg 'none'" do
-          let(:validate_options) { {alg: 'none'} }
-          it_behaves_like 'w #validate'
-        end
-
-        describe "w default validate alg" do
-          it 'raises' do
-            jwt = JsonWebToken.create(claims, create_options)
-            expect { JsonWebToken.validate(jwt) }
-              .to raise_error(RuntimeError, "Algorithm not matching 'alg' header parameter")
-          end
-        end
-      end
-
-      describe 'w default create alg' do
-        it 'raises' do
-          expect { JsonWebToken.create(claims) }.to raise_error(RuntimeError, 'Invalid key')
-        end
+    describe 'w/o key w default header alg' do
+      it 'raises' do
+        expect { JsonWebToken.create(claims) }.to raise_error(RuntimeError, 'Invalid key')
       end
     end
   end

@@ -1,11 +1,15 @@
+require 'json_web_token/format/base64_url'
+
+include JsonWebToken::Format::Base64Url
+
 def plausible_message_signature?(str)
-  _parts_count(str) == 3
+  parts = str.split('.')
+  return false unless parts.length == 3
+  mac = decode(parts[2])
+  mac.bytesize == 32 && mac.class == String
 end
 
 def plausible_unsecured_jws?(str)
-  _parts_count(str) == 2
-end
-
-def _parts_count(str)
-  str.split('.').length
+  return false unless str.end_with?('.')
+  str.split('.').length == 2
 end
