@@ -39,6 +39,18 @@ module JsonWebToken
             end
           end
         end
+
+        context 'w RS256 keys' do
+          let(:signing_key) { OpenSSL::PKey::RSA.generate(2048) }
+          let(:verifying_key) { signing_key.public_key }
+          context "w RS256 'alg' header parameter" do
+            let(:header) { {alg: 'RS256'} }
+            describe 'w passing a matching algorithm to #validate' do
+              let(:algorithm) { 'RS256' }
+              it_behaves_like 'w #validate'
+            end
+          end
+        end
       end
 
       context 'header validation' do

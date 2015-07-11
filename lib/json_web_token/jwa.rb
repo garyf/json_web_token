@@ -1,33 +1,22 @@
 require 'json_web_token/algorithm/hmac'
+require 'json_web_token/algorithm/rsa'
 
 module JsonWebToken
   module Jwa
 
-    ALGORITHMS = /(HS)(256|384|512)?/i
+    ALGORITHMS = /(HS|RS)(256|384|512)?/i
     ALG_LENGTH = 5
 
     module_function
 
     def signed(algorithm, key, data)
       alg = validated_alg(algorithm)
-      sha_bits = alg[:sha_bits]
-      case alg[:kind]
-      when 'hs'
-        Algorithm::Hmac.signed(sha_bits, key, data)
-      else
-        fail('Unsupported algorithm')
-      end
+      alg[:constant].signed(alg[:sha_bits], key, data)
     end
 
     def verified?(signature, algorithm, key, data)
       alg = validated_alg(algorithm)
-      sha_bits = alg[:sha_bits]
-      case alg[:kind]
-      when 'hs'
-        Algorithm::Hmac.verified?(signature, sha_bits, key, data)
-      else
-        false
-      end
+      alg[:constant].verified?(signature, alg[:sha_bits], key, data)
     end
 
     # private
@@ -41,12 +30,21 @@ module JsonWebToken
       match = algorithm.match(ALGORITHMS)
       return unless match && match[0].length == ALG_LENGTH
       {
-        kind: match[1].downcase,
-        sha_bits: match[2]
+        constant: validated_constant(match[1].downcase),
+        sha_bits: match[2],
       }
+    end
+
+    def validated_constant(str)
+      case str
+      when 'hs' then Algorithm::Hmac
+      when 'rs' then Algorithm::Rsa
+      else fail('Unsupported algorithm')
+      end
     end
 
     private_class_method :validated_alg,
       :destructured_alg
+      :validated_constant
   end
 end

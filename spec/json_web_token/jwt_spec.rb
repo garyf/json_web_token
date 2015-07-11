@@ -43,7 +43,7 @@ module JsonWebToken
           end
 
           describe "w 'alg':'' header parameter" do
-            let(:create_options) { {alg: nil, key: signing_key} }
+            let(:create_options) { {alg: '', key: signing_key} }
             it_behaves_like 'w #validate'
             it_behaves_like 'return message signature'
           end
@@ -54,6 +54,20 @@ module JsonWebToken
               jwt = Jwt.create(claims, create_options)
               expect { Jwt.validate(jwt) }
                 .to raise_error(RuntimeError, "Algorithm not matching 'alg' header parameter")
+            end
+          end
+        end
+
+        context 'w RS256 keys' do
+          let(:signing_key) { OpenSSL::PKey::RSA.generate(2048) }
+          let(:verifying_key) { signing_key.public_key }
+          let(:validate_options) { {alg: 'RS256', key: verifying_key} }
+          describe 'passing header parameters' do
+            let(:create_options) { {typ: 'JWT', alg: 'RS256', key: signing_key} }
+            it_behaves_like 'w #validate'
+            it 'plausible' do
+              jwt = Jwt.create(claims, create_options)
+              expect(plausible_message_signature? jwt, 256).to be true
             end
           end
         end

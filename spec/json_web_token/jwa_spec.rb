@@ -22,6 +22,13 @@ module JsonWebToken
         let(:verifying_key) { signing_key }
         it_behaves_like '#signed'
       end
+
+      describe 'RS256' do
+        let(:algorithm) { 'RS256' }
+        let(:signing_key) { OpenSSL::PKey::RSA.generate(2048) }
+        let(:verifying_key) { signing_key.public_key }
+        it_behaves_like '#signed'
+      end
     end
 
     context 'param validation' do
@@ -45,6 +52,16 @@ module JsonWebToken
             expect(mac.bytesize).to eql 32
             expect(mac.class).to eql String
           end
+        end
+      end
+
+      describe 'RS256' do
+        let(:private_key) { OpenSSL::PKey::RSA.generate(2048) }
+        let(:algorithm) { 'RS256' }
+        it 'returns a 256-byte MAC string' do
+          mac = Jwa.signed(algorithm, private_key, data)
+          expect(mac.bytesize).to eql 256
+          expect(mac.class).to eql String
         end
       end
     end

@@ -4,7 +4,7 @@ require 'json_web_token/version'
 
 Gem::Specification.new do |s|
   s.author = 'Gary Fleshman'
-  s.email = 'gf4cl@verizon.net'
+  s.email = 'gfleshman@newforge-tech.com'
   s.files = `git ls-files`.split("\n")
   s.homepage = 'https://github.com/garyf/json_web_token'
   s.name = 'json_web_token'
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   # optional
   s.add_runtime_dependency 'json', '~> 1.8', '>= 1.8.3'
-  s.add_development_dependency 'pry-byebug', '~> 3.1'
   s.add_development_dependency 'rspec', '~> 3.3'
   s.description = 'Ruby implementation of the JSON Web Token Standard Track RFC 4627'
+  s.required_ruby_version = '>= 2.0.0'
 end
