@@ -1,33 +1,50 @@
 require 'json_web_token/jwa'
+require 'support/ecdsa_key'
 
 module JsonWebToken
   describe Jwa do
-    context 'detect changed signing_input or MAC' do
-      let(:signing_input) { 'signing_input' }
-      let(:changed_signing_input) { 'changed_signing_input' }
-      shared_examples_for '#signed' do
-        it 'is #verified?' do
-          mac = Jwa.signed(algorithm, signing_key, signing_input)
-          expect(Jwa.verified? mac, algorithm, verifying_key, signing_input).to be true
-          expect(Jwa.verified? mac, algorithm, verifying_key, changed_signing_input).to be false
-
-          changed_mac = Jwa.signed(algorithm, signing_key, changed_signing_input)
-          expect(Jwa.verified? changed_mac, algorithm, verifying_key, signing_input).to be false
-        end
+    shared_examples_for 'w #verified?' do
+      it 'true' do
+        expect(Jwa.verified? mac, algorithm, verifying_key, signing_input).to be true
       end
-
+    end
+    context '#signed' do
+      let(:signing_input) { 'signing_input' }
+      let(:mac) { Jwa.signed(algorithm, private_key, signing_input) }
       describe 'HS256' do
         let(:algorithm) { 'HS256' }
-        let(:signing_key) { 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C' }
-        let(:verifying_key) { signing_key }
-        it_behaves_like '#signed'
+        let(:private_key) { 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C' }
+        let(:verifying_key) { private_key }
+        it_behaves_like 'w #verified?'
+
+        it 'returns a 32-byte MAC' do
+          expect(mac.bytesize).to eql 32
+        end
       end
 
       describe 'RS256' do
         let(:algorithm) { 'RS256' }
-        let(:signing_key) { OpenSSL::PKey::RSA.generate(2048) }
-        let(:verifying_key) { signing_key.public_key }
-        it_behaves_like '#signed'
+        let(:private_key) { OpenSSL::PKey::RSA.generate(2048) }
+        let(:verifying_key) { private_key.public_key }
+        it_behaves_like 'w #verified?'
+
+        it 'returns a 256-byte MAC' do
+          expect(mac.bytesize).to eql 256
+        end
+      end
+
+      describe 'ES256' do
+        let(:algorithm) { 'ES256' }
+        it 'w #verified? true, returns a 64-byte MAC' do
+          private_key = EcdsaKey.curve_new('256')
+          public_key_str = EcdsaKey.public_key_str(private_key)
+          public_key = EcdsaKey.public_key_new('256', public_key_str)
+
+          mac = Jwa.signed(algorithm, private_key, signing_input)
+          expect(Jwa.verified? mac, algorithm, public_key, signing_input).to be true
+
+          expect(mac.bytesize).to eql 64
+        end
       end
     end
 
@@ -43,25 +60,6 @@ module JsonWebToken
                 .to raise_error(RuntimeError, 'Unrecognized algorithm')
             end
           end
-        end
-
-        describe 'HS256' do
-          let(:algorithm) { 'HS256' }
-          it 'returns a 32-byte MAC string' do
-            mac = Jwa.signed(algorithm, key, data)
-            expect(mac.bytesize).to eql 32
-            expect(mac.class).to eql String
-          end
-        end
-      end
-
-      describe 'RS256' do
-        let(:private_key) { OpenSSL::PKey::RSA.generate(2048) }
-        let(:algorithm) { 'RS256' }
-        it 'returns a 256-byte MAC string' do
-          mac = Jwa.signed(algorithm, private_key, data)
-          expect(mac.bytesize).to eql 256
-          expect(mac.class).to eql String
         end
       end
     end

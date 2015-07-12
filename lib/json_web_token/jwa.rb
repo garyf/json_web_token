@@ -1,10 +1,11 @@
+require 'json_web_token/algorithm/ecdsa'
 require 'json_web_token/algorithm/hmac'
 require 'json_web_token/algorithm/rsa'
 
 module JsonWebToken
   module Jwa
 
-    ALGORITHMS = /(HS|RS)(256|384|512)?/i
+    ALGORITHMS = /(HS|RS|ES)(256|384|512)?/i
     ALG_LENGTH = 5
 
     module_function
@@ -39,6 +40,7 @@ module JsonWebToken
       case str
       when 'hs' then Algorithm::Hmac
       when 'rs' then Algorithm::Rsa
+      when 'es' then Algorithm::Ecdsa
       else fail('Unsupported algorithm')
       end
     end

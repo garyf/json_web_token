@@ -75,7 +75,6 @@ module JsonWebToken
           it 'returns a 256-byte MAC string' do
             mac = Rsa.signed(sha_bits, private_key, data)
             expect(mac.bytesize).to eql 256
-            expect(mac.class).to eql String
           end
         end
 

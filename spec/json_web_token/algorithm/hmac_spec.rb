@@ -78,7 +78,6 @@ module JsonWebToken
             it 'returns a 32-byte MAC string' do
               mac = Hmac.signed(sha_bits, key, data)
               expect(mac.bytesize).to eql 32
-              expect(mac.class).to eql String
             end
           end
         end
@@ -95,7 +94,6 @@ module JsonWebToken
             it 'returns a 48-byte MAC string' do
               mac = Hmac.signed(sha_bits, key, data)
               expect(mac.bytesize).to eql 48
-              expect(mac.class).to eql String
             end
           end
         end
@@ -112,7 +110,6 @@ module JsonWebToken
             it 'returns a 64-byte MAC string' do
               mac = Hmac.signed(sha_bits, key, data)
               expect(mac.bytesize).to eql 64
-              expect(mac.class).to eql String
             end
           end
         end

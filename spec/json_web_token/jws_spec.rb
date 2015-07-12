@@ -1,4 +1,5 @@
 require 'json_web_token/jws'
+require 'support/ecdsa_key'
 
 module JsonWebToken
   describe Jws do
@@ -6,7 +7,7 @@ module JsonWebToken
       let(:payload) { 'payload' }
       context '#message_signature' do
         shared_examples_for 'w #validate' do
-          it 'verified' do
+          it 'is verified' do
             jws = Jws.message_signature(header, payload, signing_key)
             expect(Jws.validate jws, algorithm, verifying_key).to eql jws
           end
@@ -48,6 +49,21 @@ module JsonWebToken
             describe 'w passing a matching algorithm to #validate' do
               let(:algorithm) { 'RS256' }
               it_behaves_like 'w #validate'
+            end
+          end
+        end
+
+        context "w ES256 'alg' header parameter" do
+          let(:header) { {alg: 'ES256'} }
+          describe 'w passing a matching algorithm to #validate' do
+            let(:algorithm) { 'ES256' }
+            it 'is verified' do
+              private_key = EcdsaKey.curve_new('256')
+              public_key_str = EcdsaKey.public_key_str(private_key)
+              public_key = EcdsaKey.public_key_new('256', public_key_str)
+
+              jws = Jws.message_signature(header, payload, private_key)
+              expect(Jws.validate jws, algorithm, public_key).to eql jws
             end
           end
         end
