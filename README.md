@@ -1,8 +1,6 @@
-# JSON Web Token
+# JSON Web Token [![travis][ci_img]][travis] [![code_climate][cc_img]][code_climate]
 
 ## A JSON Web Token implementation for Ruby
-
-[![code_climate][cc_img]][code_climate]
 
 ### Description
 A Ruby implementation of the JSON Web Token (JWT) Standards Track [RFC 7519][rfc7519]
@@ -96,7 +94,6 @@ opts = {
 claims = JsonWebToken.validate(jwt, opts)
 
 # unsecured token (algorithm is 'none')
-
 unsecured_jwt_example = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt.'
 
 claims = JsonWebToken.validate(unsecured_jwt_example, alg: 'none')
@@ -142,5 +139,7 @@ Future implementation may include these features:
 [oauth2]: https://github.com/intridea/oauth2
 [rack-cors]: https://github.com/cyu/rack-cors
 
+[travis]: https://travis-ci.org/garyf/json_web_token
+[ci_img]: https://travis-ci.org/garyf/json_web_token.svg?branch=master
 [code_climate]: https://codeclimate.com/github/garyf/json_web_token
 [cc_img]: https://codeclimate.com/github/garyf/json_web_token/badges/gpa.svg

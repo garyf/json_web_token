@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.1.1 (2015-07-13)
+
+* bug fix
+  * #symbolize_keys spec failing on < ruby-2.2.0
+
 ### v0.1.0 (2015-07-12)
 
 * enhancements
