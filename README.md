@@ -1,4 +1,4 @@
-# JSON Web Token [![travis][ci_img]][travis] [![code_climate][cc_img]][code_climate]
+# JSON Web Token [![travis][ci_img]][travis] [![yard docs][yd_img]][yard_docs] [![code climate][cc_img]][code_climate]
 
 ## A JSON Web Token implementation for Ruby
 
@@ -36,7 +36,7 @@ Returns a JSON Web Token string
 
 `claims` (required) string or hash
 
-`options` (optional) hash
+`options` (required) hash
 
 * **alg** (optional, default: `HS256`)
 * **key** (required unless alg is 'none')
@@ -70,7 +70,7 @@ Returns either:
 
 `jwt` (required) is a JSON web token string
 
-`options` (optional) hash
+`options` (required) hash
 
 * **alg** (optional, default: `HS256`)
 * **key** (required unless alg is 'none')
@@ -141,5 +141,7 @@ Future implementation may include these features:
 
 [travis]: https://travis-ci.org/garyf/json_web_token
 [ci_img]: https://travis-ci.org/garyf/json_web_token.svg?branch=master
+[yard_docs]: http://www.rubydoc.info/gems/json_web_token
+[yd_img]: http://img.shields.io/badge/yard-docs-blue.svg
 [code_climate]: https://codeclimate.com/github/garyf/json_web_token
 [cc_img]: https://codeclimate.com/github/garyf/json_web_token/badges/gpa.svg
