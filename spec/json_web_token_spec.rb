@@ -37,7 +37,7 @@ describe JsonWebToken do
 
     describe 'w/o key w default header alg' do
       it 'raises' do
-        expect { JsonWebToken.create(claims) }.to raise_error(RuntimeError, 'Invalid key')
+        expect { JsonWebToken.create(claims) }.to raise_error(RuntimeError, 'Invalid shared key')
       end
     end
   end

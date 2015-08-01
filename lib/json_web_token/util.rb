@@ -4,7 +4,7 @@ module JsonWebToken
     module_function
 
     # https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#section-3.2
-    def constant_time_compare(a, b)
+    def constant_time_compare?(a, b)
       return false if a.nil? || b.nil? || a.empty? || b.empty?
       secure_compare(a, b)
     end

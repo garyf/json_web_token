@@ -2,6 +2,8 @@ require 'json_web_token/algorithm/common'
 
 module JsonWebToken
   module Algorithm
+    # Sign or verify a JSON Web Signature (JWS) structure using RSASSA-PKCS-v1_5
+    # @see http://tools.ietf.org/html/rfc7518#section-3.3
     module Rsa
 
       extend JsonWebToken::Algorithm::Common
@@ -10,19 +12,29 @@ module JsonWebToken
 
       module_function
 
-      def signed(sha_bits, key, data)
-        validate_key(key, sha_bits)
-        key.sign(digest_new(sha_bits), data)
+      # @param sha_bits [String] desired security level in bits of the signature scheme
+      # @param private_key [OpenSSL::PKey::RSA] key used to sign a digital signature, or mac
+      # @param signing_input [String] input payload for a mac computation
+      # @return [BinaryString] a digital signature, or mac
+      # @example
+      #   Rsa.sign('256', < private_key >, 'signing_input').bytes.length
+      #   # => 256
+      def sign(sha_bits, private_key, signing_input)
+        validate_key(private_key, sha_bits)
+        private_key.sign(digest_new(sha_bits), signing_input)
       end
 
-      def verified?(signature, sha_bits, key, data)
-        validate_key(key, sha_bits)
-        key.verify(digest_new(sha_bits), signature, data)
+      # @param mac [BinaryString] a digital signature, or mac
+      # @param public_key [OpenSSL::PKey::RSA] key used to verify a digital signature, or mac
+      # @return [Boolean] a predicate to verify the signing_input for a given +mac+
+      # @example
+      #   Rsa.verify?(< binary_string >, '256', < public_key >, 'signing_input')
+      #   # => true
+      def verify?(mac, sha_bits, public_key, signing_input)
+        validate_key(public_key, sha_bits)
+        public_key.verify(digest_new(sha_bits), mac, signing_input)
       end
 
-      # private
-
-      # http://tools.ietf.org/html/rfc7518#section-3.3
       # https://github.com/ruby/openssl/issues/5
       def validate_key_size(key, sha_bits)
         fail('Invalid private key') unless key && key.n.num_bits >= KEY_BITS_MIN

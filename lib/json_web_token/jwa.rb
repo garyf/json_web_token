@@ -11,13 +11,13 @@ module JsonWebToken
     module_function
 
     def signed(algorithm, key, data)
-      alg = validated_alg(algorithm)
-      alg[:constant].signed(alg[:sha_bits], key, data)
+      alg_module, sha_bits = validated_alg(algorithm)
+      alg_module.sign(sha_bits, key, data)
     end
 
     def verified?(signature, algorithm, key, data)
-      alg = validated_alg(algorithm)
-      alg[:constant].verified?(signature, alg[:sha_bits], key, data)
+      alg_module, sha_bits = validated_alg(algorithm)
+      alg_module.verify?(signature, sha_bits, key, data)
     end
 
     # private
@@ -30,10 +30,9 @@ module JsonWebToken
     def destructured_alg(algorithm)
       match = algorithm.match(ALGORITHMS)
       return unless match && match[0].length == ALG_LENGTH
-      {
-        constant: validated_constant(match[1].downcase),
-        sha_bits: match[2],
-      }
+      alg_module = validated_constant(match[1].downcase)
+      sha_bits = match[2]
+      [alg_module, sha_bits]
     end
 
     def validated_constant(str)
