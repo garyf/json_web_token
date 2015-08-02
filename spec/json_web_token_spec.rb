@@ -1,12 +1,12 @@
 require 'json_web_token'
 
 describe JsonWebToken do
-  context '#create' do
-    let(:claims) { {exp: 'tomorrow'} }
-    shared_examples_for 'w #validate' do
-      it 'is verified' do
-        jwt = JsonWebToken.create(claims, create_options)
-        expect(JsonWebToken.validate jwt, validate_options).to include(claims)
+  context '#sign' do
+    let(:claims) { { iss: 'joe', exp: 1300819380, :'http://example.com/is_root' => true} }
+    shared_examples_for 'w #verify' do
+      it 'w a claims set' do
+        jwt = JsonWebToken.sign(claims, sign_options)
+        expect(JsonWebToken.verify jwt, verify_options).to include(claims)
       end
     end
 
@@ -15,29 +15,38 @@ describe JsonWebToken do
       let(:verifying_key) { signing_key }
 
       describe 'default alg' do
-        let(:create_options) { {key: signing_key} }
-        let(:validate_options) { {key: verifying_key} }
-        it_behaves_like 'w #validate'
+        let(:sign_options) { {key: signing_key} }
+        let(:verify_options) { {key: verifying_key} }
+        it_behaves_like 'w #verify'
       end
 
       context "w 'alg' option" do
         describe 'HS256' do
-          let(:create_options) { {alg: 'HS256', key: signing_key} }
-          let(:validate_options) { {alg: 'HS256', key: verifying_key} }
-          it_behaves_like 'w #validate'
+          let(:sign_options) { {alg: 'HS256', key: signing_key} }
+          let(:verify_options) { {alg: 'HS256', key: verifying_key} }
+          it_behaves_like 'w #verify'
         end
 
         describe "w alg 'none'" do
-          let(:create_options) { {alg: 'none', key: signing_key} }
-          let(:validate_options) { {alg: 'none', key: verifying_key} }
-          it_behaves_like 'w #validate'
+          let(:sign_options) { {alg: 'none', key: signing_key} }
+          let(:verify_options) { {alg: 'none', key: verifying_key} }
+          it_behaves_like 'w #verify'
         end
       end
     end
 
     describe 'w/o key w default header alg' do
       it 'raises' do
-        expect { JsonWebToken.create(claims) }.to raise_error(RuntimeError, 'Invalid shared key')
+        expect { JsonWebToken.sign(claims, {}) }.to raise_error(RuntimeError, 'Invalid shared key')
+      end
+    end
+  end
+
+  context 'module alias JWT' do
+    describe '#sign' do
+      let(:claims) { { iss: 'joe', exp: 1300819380, :'http://example.com/is_root' => true} }
+      it 'recognized' do
+        expect(JsonWebToken.sign(claims, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')).to be
       end
     end
   end

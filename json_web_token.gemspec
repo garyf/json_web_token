@@ -16,6 +16,6 @@ Gem::Specification.new do |s|
   # optional
   s.add_runtime_dependency 'json', '~> 1.8', '>= 1.8.3'
   s.add_development_dependency 'rspec', '~> 3.3'
-  s.description = 'Ruby implementation of the JSON Web Token standard, RFC 7519'
+  s.description = 'Ruby implementation of the JSON Web Token (JWT) standard, RFC 7519'
   s.required_ruby_version = '>= 2.0.0'
 end

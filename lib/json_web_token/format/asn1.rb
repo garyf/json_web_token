@@ -2,6 +2,12 @@ require 'openssl'
 
 module JsonWebToken
   module Format
+    # ASN1 data structures are usually encoded using the Distinguished Encoding Rules (DER).
+    # The ASN1 module provides the necessary classes that allow generation of ASN1 data
+    # structures and the methods to encode them using a DER encoding. The decode method allows
+    # parsing arbitrary DER-encoded data to a Ruby object that can then be modified and
+    # re-encoded at will.
+    # @see http://docs.ruby-lang.org/en/2.1.0/OpenSSL/ASN1.html
     module Asn1
 
       KEY_BITS = {
@@ -11,12 +17,6 @@ module JsonWebToken
       }
 
       module_function
-
-      # ASN1 data structures are usually encoded using the Distinguished Encoding Rules (DER).
-      # The ASN1 module provides the necessary classes that allow generation of ASN1 data
-      # structures and the methods to encode them using a DER encoding. The decode method allows
-      # parsing arbitrary DER-encoded data to a Ruby object that can then be modified and
-      # re-encoded at will. (see http://docs.ruby-lang.org/en/2.1.0/OpenSSL/ASN1.html)
 
       def der_to_signature(der, sha_bits)
         signature_pair = OpenSSL::ASN1.decode(der).value
@@ -32,8 +32,6 @@ module JsonWebToken
         ])
         asn1_seq.to_der
       end
-
-      # private
 
       def per_part_byte_count(sha_bits)
         bits = KEY_BITS[sha_bits]

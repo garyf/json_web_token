@@ -20,7 +20,7 @@ module JsonWebToken
       end
 
       context 'w claims' do
-        let(:claims) { { iss: 'joe', exp: 1300819380, 'http://example.com/is_root': true} }
+        let(:claims) { { iss: 'joe', exp: 1300819380, :'http://example.com/is_root' => true} }
         context 'w HS256 keys' do
           let(:signing_key) { 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C' }
           let(:verifying_key) { signing_key }
@@ -118,7 +118,7 @@ module JsonWebToken
             describe 'w default verify alg' do
               it 'raises' do
                 jwt = Jwt.sign(claims, sign_options)
-                expect { Jwt.verify(jwt) }
+                expect { Jwt.verify(jwt, {alg: nil}) }
                   .to raise_error(RuntimeError, "Algorithm not matching 'alg' header parameter")
               end
             end

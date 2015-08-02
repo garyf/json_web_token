@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.2.0 (2015-08-02)
+
+* backward incompatible changes
+  * Top level API now #sign and #verify
+
 ### v0.1.2 (2015-08-02)
 
 * enhancements

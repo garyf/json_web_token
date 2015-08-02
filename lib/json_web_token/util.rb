@@ -1,22 +1,34 @@
 module JsonWebToken
+  # Utility methods
   module Util
 
     module_function
 
-    # https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#section-3.2
+    # @param a [String]
+    # @param b [String]
+    # @return [Boolean] a predicate that compares two strings for equality in constant-time
+    #   to avoid timing attacks
+    # @example
+    #   Util.constant_time_compare?("a", "A")
+    #   # => false
+    # @see https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#section-3.2
+    # @see cf. rails activesupport/lib/active_support/security_utils.rb
     def constant_time_compare?(a, b)
       return false if a.nil? || b.nil? || a.empty? || b.empty?
       secure_compare(a, b)
     end
 
-    # cf. rails activesupport/lib/active_support/core_ext/hash/keys.rb
+    # @param hsh [Hash]
+    # @return [Hash] a new hash with all keys converted to symbols,
+    #   as long as they respond to to_sym
+    # @example
+    #   Util.symbolize_keys({'a' =>  0, 'b' => '2', c: '3'})
+    #   # => {a: 0, b: '2', c: '3'}
+    # @see cf. rails activesupport/lib/active_support/core_ext/hash/keys.rb
     def symbolize_keys(hsh)
       transform_keys(hsh) { |key| key.to_sym rescue key }
     end
 
-    # private
-
-    # cf. rails activesupport/lib/active_support/security_utils.rb
     def secure_compare(a, b)
       return false unless a.bytesize == b.bytesize
       l = a.unpack "C#{a.bytesize}"

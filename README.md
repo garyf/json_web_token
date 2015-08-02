@@ -1,9 +1,9 @@
 # JSON Web Token [![travis][ci_img]][travis] [![yard docs][yd_img]][yard_docs] [![code climate][cc_img]][code_climate]
 
-## A JSON Web Token implementation for Ruby
+## A JSON Web Token (JWT) implementation for Ruby
 
 ### Description
-A Ruby implementation of the JSON Web Token (JWT) Standards Track [RFC 7519][rfc7519]
+A Ruby implementation of the JSON Web Token standard [RFC 7519][rfc7519]
 
 ## Installation
     gem install json_web_token
@@ -30,7 +30,7 @@ Secure Cross-Origin Resource Sharing ([CORS][cors]) using the [rack-cors][rack-c
 
 ## Usage
 
-### JsonWebToken.create(claims, options)
+### JsonWebToken.sign(claims, options)
 
 Returns a JSON Web Token string
 
@@ -47,7 +47,7 @@ Example
 require 'json_web_token'
 
 # sign with default algorithm, HMAC SHA256
-jwt = JsonWebToken.create({foo: 'bar'}, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
+jwt = JsonWebToken.sign({foo: 'bar'}, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
 
 # sign with RSA SHA256 algorithm
 opts = {
@@ -55,14 +55,14 @@ opts = {
   key: < RSA private key >
 }
 
-jwt = JsonWebToken.create({foo: 'bar'}, opts)
+jwt = JsonWebToken.sign({foo: 'bar'}, opts)
 
 # unsecured token (algorithm is 'none')
-jwt = JsonWebToken.create({foo: 'bar'}, alg: 'none')
+jwt = JsonWebToken.sign({foo: 'bar'}, alg: 'none')
 
 ```
 
-### JsonWebToken.validate(jwt, options)
+### JsonWebToken.verify(jwt, options)
 
 Returns either:
 * a JWT claims set string or hash, if the Message Authentication Code (MAC), or signature, is verified
@@ -83,7 +83,7 @@ require 'json_web_token'
 secure_jwt_example = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt.cGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
 
 # verify with default algorithm, HMAC SHA256
-claims = JsonWebToken.validate(secure_jwt_example, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
+claims = JsonWebToken.verify(secure_jwt_example, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
 
 # verify with RSA SHA256 algorithm
 opts = {
@@ -91,12 +91,12 @@ opts = {
   key: < RSA public key >
 }
 
-claims = JsonWebToken.validate(jwt, opts)
+claims = JsonWebToken.verify(jwt, opts)
 
 # unsecured token (algorithm is 'none')
 unsecured_jwt_example = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt.'
 
-claims = JsonWebToken.validate(unsecured_jwt_example, alg: 'none')
+claims = JsonWebToken.verify(unsecured_jwt_example, alg: 'none')
 
 ```
 ### Supported encryption algorithms
@@ -115,7 +115,7 @@ ES512 | ECDSA using P-521 and SHA-512
 none | No digital signature or MAC performed (unsecured)
 
 ### Supported Ruby Versions
-Ruby 2.0 and up
+Ruby 2.0.0 and up
 
 ### Limitations
 Future implementation may include these features:
@@ -141,7 +141,7 @@ Future implementation may include these features:
 
 [travis]: https://travis-ci.org/garyf/json_web_token
 [ci_img]: https://travis-ci.org/garyf/json_web_token.svg?branch=master
-[yard_docs]: http://www.rubydoc.info/gems/json_web_token
+[yard_docs]: http://www.rubydoc.info/github/garyf/json_web_token
 [yd_img]: http://img.shields.io/badge/yard-docs-blue.svg
 [code_climate]: https://codeclimate.com/github/garyf/json_web_token
 [cc_img]: https://codeclimate.com/github/garyf/json_web_token/badges/gpa.svg
