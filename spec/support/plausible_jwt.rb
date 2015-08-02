@@ -9,7 +9,7 @@ def plausible_message_signature?(str, bytesize = 32)
   mac.bytesize == bytesize && mac.class == String
 end
 
-def plausible_unsecured_jws?(str)
+def plausible_unsecured_message?(str)
   return false unless str.end_with?('.')
   str.split('.').length == 2
 end

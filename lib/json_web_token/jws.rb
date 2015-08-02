@@ -4,45 +4,72 @@ require 'json_web_token/jwa'
 require 'json_web_token/util'
 
 module JsonWebToken
+  # Represent content to be secured with digital signatures or Message Authentication Codes (MACs)
+  # @see http://tools.ietf.org/html/rfc7515
   module Jws
 
     MESSAGE_SIGNATURE_PARTS = 3
 
     module_function
 
-    # http://tools.ietf.org/html/rfc7515#page-15
-    def message_signature(header, payload, key)
+    # @param header [Hash] the desired set of JWS header parameters
+    # @param payload [String] content to be used as the JWS payload
+    # @param key [String | OpenSSL::PKey::RSA | OpenSSL::PKey::EC] secret key used to sign
+    #   a digital signature, or mac
+    # @return [String] a JSON Web Signature, representing a digitally signed payload
+    # @example
+    #   header = {alg: 'HS256'}
+    #   key = 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C'
+    #   Jws.sign(header, 'payload', key)
+    #   # => 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'
+    # @see http://tools.ietf.org/html/rfc7515#page-15
+    def sign(header, payload, key)
       alg = alg_parameter(header)
-      data = signing_input(header, payload)
-      "#{data}.#{signature(alg, key, data)}"
+      signing_input = encode_input(header, payload)
+      "#{signing_input}.#{signature(alg, key, signing_input)}"
     end
 
-    # http://tools.ietf.org/html/rfc7515#page-16
-    def validate(jws, algorithm, key = nil)
+    # @param header [Hash] the desired set of JWS header parameters
+    # @param payload [String] content to be used as the JWS payload
+    # @return [String] a JWS that provides no integrity protection (i.e. lacks a signature)
+    # @example
+    #   header = {alg: 'none'}
+    #   Jws.sign(header, 'payload')
+    #   # => 'eyJhbGciOiJub25lIn0.cGF5bG9hZA.'
+    # @see http://tools.ietf.org/html/rfc7515#page-47
+    def unsecured_message(header, payload)
+      fail("Invalid 'alg' header parameter") unless alg_parameter(header) == 'none'
+      "#{encode_input(header, payload)}." # note trailing '.'
+    end
+
+    # @param jws [String] a JSON Web Signature
+    # @param algorithm [String] 'alg' header parameter value for JWS
+    # @param key [String | OpenSSL::PKey::RSA | OpenSSL::PKey::EC] key used to verify
+    #   a digital signature, or mac
+    # @return [String | Boolean] a JWS if the mac verifies, or +false+ otherwise
+    # @example
+    #   jws = 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'
+    #   key = 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C'
+    #   Jws.verify(jws, 'HS256', key)
+    #   # => 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'
+    # @see http://tools.ietf.org/html/rfc7515#page-16
+    def verify(jws, algorithm, key = nil)
       compare_alg(jws, algorithm)
       return jws if algorithm == 'none'
-      signature_valid?(jws, algorithm, key) ? jws : 'Invalid'
+      signature_verify?(jws, algorithm, key) ? jws : false
     end
-
-    # http://tools.ietf.org/html/rfc7515#page-47
-    def unsecured_jws(header, payload)
-      fail("Invalid 'alg' header parameter") unless alg_parameter(header) == 'none'
-      "#{signing_input(header, payload)}." # note trailing '.'
-    end
-
-    # private
 
     def alg_parameter(header)
       alg = Util.symbolize_keys(header)[:alg]
       alg && !alg.empty? ? alg : fail("Missing required 'alg' header parameter")
     end
 
-    def signing_input(header, payload)
-      "#{Format::Base64Url.encode header.to_json}.#{Format::Base64Url.encode payload}"
+    def encode_input(header, payload)
+      "#{Format::Base64Url.encode(header.to_json)}.#{Format::Base64Url.encode(payload)}"
     end
 
     def signature(algorithm, key, data)
-      Format::Base64Url.encode(Jwa.signed algorithm, key, data)
+      Format::Base64Url.encode(Jwa.sign(algorithm, key, data))
     end
 
     # http://tools.ietf.org/html/rfc7515#section-4.1.1
@@ -54,22 +81,22 @@ module JsonWebToken
     end
 
     def decoded_header_json_to_hash(jws)
-      JSON.parse(Format::Base64Url.decode jws.split('.')[0])
+      JSON.parse(Format::Base64Url.decode(jws.split('.')[0]))
     end
 
-    def signature_valid?(jws, algorithm, key)
+    def signature_verify?(jws, algorithm, key)
       ary = jws.split('.')
       return unless key && ary.length == MESSAGE_SIGNATURE_PARTS
       decoded_signature = Format::Base64Url.decode(ary[2])
       payload = "#{ary[0]}.#{ary[1]}"
-      Jwa.verified?(decoded_signature, algorithm, key, payload)
+      Jwa.verify?(decoded_signature, algorithm, key, payload)
     end
 
     private_class_method :alg_parameter,
-      :signing_input,
+      :encode_input,
       :signature,
       :compare_alg,
       :decoded_header_json_to_hash,
-      :signature_valid?
+      :signature_verify?
   end
 end
