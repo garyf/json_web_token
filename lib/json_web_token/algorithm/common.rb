@@ -10,9 +10,9 @@ module JsonWebToken
         '512'
       ]
 
-      def validate_key(key, sha_bits)
+      def validate_key(sha_bits, key)
         validate_sha_bits(sha_bits)
-        validate_key_size(key, sha_bits)
+        validate_key_size(sha_bits, key)
       end
 
       def validate_sha_bits(sha_bits)

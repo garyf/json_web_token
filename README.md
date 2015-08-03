@@ -66,7 +66,7 @@ jwt = JsonWebToken.sign({foo: 'bar'}, alg: 'none')
 
 Returns either:
 * a JWT claims set string or hash, if the Message Authentication Code (MAC), or signature, is verified
-* a string, 'Invalid', otherwise
+* a hash, error: 'invalid', otherwise
 
 `jwt` (required) is a JSON web token string
 

@@ -59,6 +59,13 @@ module JsonWebToken
           end
         end
 
+        describe 'w/o key w default header alg' do
+          it 'raises' do
+            expect { JsonWebToken.sign(claims, {}) }
+              .to raise_error(RuntimeError, 'Invalid shared key')
+          end
+        end
+
         describe 'w HS256 key changed' do
           let(:sign_options) { {alg: 'HS256', key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C'} }
           let(:changed_key) { 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9Z' }

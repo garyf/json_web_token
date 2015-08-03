@@ -20,7 +20,7 @@ module JsonWebToken
       #   Hmac.sign('256', shared_key, 'signing_input').bytes
       #   # => [90, 34, 44, 252, 147, 130, 167, 173, 86, 191, 247, 93, 94, 12, 200, 30, 173, 115, 248, 89, 246, 222, 4, 213, 119, 74, 70, 20, 231, 194, 104, 103]
       def sign(sha_bits, shared_key, signing_input)
-        validate_key(shared_key, sha_bits)
+        validate_key(sha_bits, shared_key)
         OpenSSL::HMAC.digest(digest_new(sha_bits), shared_key, signing_input)
       end
 
@@ -34,15 +34,20 @@ module JsonWebToken
       #   Hmac.verify?(< binary_string >, '256', shared_key, 'signing_input')
       #   # => true
       def verify?(mac, sha_bits, shared_key, signing_input)
-        validate_key(shared_key, sha_bits)
+        validate_key(sha_bits, shared_key)
         Util.constant_time_compare?(mac, sign(sha_bits, shared_key, signing_input))
       end
 
-      def validate_key_size(key, sha_bits)
-        fail('Invalid shared key') unless key && key.bytesize * 8 >= sha_bits.to_i
+      def validate_key_size(sha_bits, key)
+        fail('Invalid shared key') if weak_key?(sha_bits, key)
       end
 
-      private_class_method :validate_key_size
+      def weak_key?(sha_bits, key)
+        !key || key.bytesize * 8 < sha_bits.to_i
+      end
+
+      private_class_method :validate_key_size,
+        :weak_key?
     end
   end
 end

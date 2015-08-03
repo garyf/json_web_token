@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/garyf/json_web_token'
   s.name = 'json_web_token'
   s.platform = Gem::Platform::RUBY
-  s.summary = 'JSON Web Token for Ruby'
+  s.summary = 'JSON Web Token (JWT) for Ruby'
   s.version = JsonWebToken::VERSION
   # recommended
   s.license = 'MIT'

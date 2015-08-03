@@ -34,12 +34,6 @@ describe JsonWebToken do
         end
       end
     end
-
-    describe 'w/o key w default header alg' do
-      it 'raises' do
-        expect { JsonWebToken.sign(claims, {}) }.to raise_error(RuntimeError, 'Invalid shared key')
-      end
-    end
   end
 
   context 'module alias JWT' do

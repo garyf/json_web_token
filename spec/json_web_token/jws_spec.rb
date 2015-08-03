@@ -23,7 +23,7 @@ module JsonWebToken
               it_behaves_like 'does #verify'
 
               describe 'w/o passing key to #verify' do
-                it "returns 'Invalid'" do
+                it 'returns false' do
                   jws = Jws.sign(header, payload, signing_key)
                   expect(Jws.verify jws, algorithm, nil).to be false
                 end
@@ -31,7 +31,7 @@ module JsonWebToken
 
               describe 'w passing a changed key to #verify' do
                 let(:changed_key) { 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9Z' }
-                it "returns 'Invalid'" do
+                it 'returns false' do
                   jws = Jws.sign(header, payload, signing_key)
                   expect(Jws.verify jws, algorithm, changed_key).to be false
                 end

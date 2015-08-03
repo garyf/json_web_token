@@ -47,7 +47,8 @@ module JsonWebToken
       context 'param validation' do
         shared_examples_for 'invalid private_key' do
           it 'raises' do
-            expect { Rsa.sign(sha_bits, private_key, signing_input_0) }.to raise_error(RuntimeError, 'Invalid private key')
+            expect { Rsa.sign(sha_bits, private_key, signing_input_0) }
+              .to raise_error(RuntimeError, 'Invalid key: RSA modulus too small')
           end
         end
 

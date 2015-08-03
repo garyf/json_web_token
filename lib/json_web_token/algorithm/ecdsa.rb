@@ -26,7 +26,7 @@ module JsonWebToken
       #   Ecdsa.sign('256', private_key, 'signing_input').bytes
       #   # => [90, 34, 44, 252, 147, 130, 167, 173, 86, 191, 247, 93, 94, 12, 200, 30, 173, 115, 248, 89, 246, 222, 4, 213, 119, 74, 70, 20, 231, 194, 104, 103]
       def sign(sha_bits, private_key, signing_input)
-        validate_key(private_key, sha_bits)
+        validate_key(sha_bits, private_key)
         der = private_key.dsa_sign_asn1(ssl_digest_hash sha_bits, signing_input)
         der_to_signature(der, sha_bits)
       end
@@ -40,21 +40,20 @@ module JsonWebToken
       #   Ecdsa.verify?(< binary_string >, '256', < public_key >, 'signing_input')
       #   # => true
       def verify?(mac, sha_bits, public_key, signing_input)
-        validate_key(public_key, sha_bits)
+        validate_key(sha_bits, public_key)
         validate_signature_size(mac, sha_bits)
         der = signature_to_der(mac, sha_bits)
         public_key.dsa_verify_asn1(ssl_digest_hash(sha_bits, signing_input), der)
       end
 
-      def validate_key_size(_key, _sha_bits); end
+      def validate_key_size(_sha_bits, _key); end
 
       def ssl_digest_hash(sha_bits, signing_input)
         digest_new(sha_bits).digest(signing_input)
       end
 
       def validate_signature_size(mac, sha_bits)
-        n = MAC_BYTE_COUNT[sha_bits]
-        fail('Invalid signature') unless mac && mac.bytesize == n
+        fail('Invalid signature') unless mac && mac.bytesize == MAC_BYTE_COUNT[sha_bits]
       end
 
       private_class_method :validate_key_size,
