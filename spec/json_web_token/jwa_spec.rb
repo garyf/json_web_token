@@ -1,7 +1,11 @@
+require 'json_web_token/algorithm/rsa_util'
 require 'json_web_token/jwa'
 require 'support/ecdsa_key'
 
 module JsonWebToken
+
+  RsaUtil = JsonWebToken::Algorithm::RsaUtil
+
   describe Jwa do
     let(:signing_input) { '{"iss":"joe","exp":1300819380,"http://example.com/is_root":true}' }
     shared_examples_for 'w #verify?' do
@@ -24,8 +28,9 @@ module JsonWebToken
 
       describe 'RS256' do
         let(:algorithm) { 'RS256' }
-        let(:signing_key) { OpenSSL::PKey::RSA.generate(2048) }
-        let(:verifying_key) { signing_key.public_key }
+        let(:path_to_keys) { 'spec/fixtures/rsa' }
+        let(:signing_key) { RsaUtil.private_key(path_to_keys) }
+        let(:verifying_key) { RsaUtil.public_key(path_to_keys) }
         it_behaves_like 'w #verify?'
 
         it 'returns a 256-byte MAC' do

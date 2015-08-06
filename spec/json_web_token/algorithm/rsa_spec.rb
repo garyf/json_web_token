@@ -1,13 +1,15 @@
 require 'json_web_token/algorithm/rsa'
+require 'json_web_token/algorithm/rsa_util'
 
 module JsonWebToken
   module Algorithm
     describe Rsa do
       let(:signing_input_0) { '{"iss":"joe","exp":1300819380,"http://example.com/is_root":true}' }
       let(:signing_input_1) { '{"iss":"mike","exp":1300819380,"http://example.com/is_root":false}' }
+      let(:path_to_keys) { 'spec/fixtures/rsa' }
       context 'detect changed signing_input or MAC' do
-        let(:private_key) { OpenSSL::PKey::RSA.generate(Rsa::KEY_BITS_MIN) }
-        let(:public_key) { private_key.public_key }
+        let(:private_key) { RsaUtil.private_key(path_to_keys) }
+        let(:public_key) { RsaUtil.public_key(path_to_keys) }
         shared_examples_for '#sign' do
           it 'does #verify?' do
             mac = Rsa.sign(sha_bits, private_key, signing_input_0)
@@ -24,7 +26,7 @@ module JsonWebToken
           it_behaves_like '#sign'
 
           describe 'changed key' do
-            let(:changed_public_key) { OpenSSL::PKey::RSA.generate(Rsa::KEY_BITS_MIN).public_key }
+            let(:changed_public_key) { RsaUtil.public_key(path_to_keys, 'public_key_alt.pem') }
             it 'fails to #verify?' do
               mac = Rsa.sign(sha_bits, private_key, signing_input_0)
               expect(Rsa.verify? mac, sha_bits, public_key, signing_input_0).to be true
@@ -52,8 +54,8 @@ module JsonWebToken
           end
         end
 
-        context 'private_key bit size (2047) < KEY_BITS_MIN (2048)' do
-          let(:private_key) { OpenSSL::PKey::RSA.generate(Rsa::KEY_BITS_MIN - 1) }
+        context 'private_key bit size < KEY_BITS_MIN (2048)' do
+          let(:private_key) { RsaUtil.private_key(path_to_keys, 'private_key_weak.pem') }
           describe 'w 256 sha_bits' do
             let(:sha_bits) { '256' }
             it_behaves_like 'invalid private_key'
@@ -78,7 +80,7 @@ module JsonWebToken
         end
 
         context 'private_key bits (2048) == KEY_BITS_MIN (2048)' do
-          let(:private_key) { OpenSSL::PKey::RSA.generate(Rsa::KEY_BITS_MIN) }
+          let(:private_key) { RsaUtil.private_key(path_to_keys) }
           describe 'w 256 sha_bits' do
             let(:sha_bits) { '256' }
             it_behaves_like '2048 bit private_key'

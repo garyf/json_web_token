@@ -34,7 +34,6 @@ module JsonWebToken
       #   Hmac.verify?(< binary_string >, '256', shared_key, 'signing_input')
       #   # => true
       def verify?(mac, sha_bits, shared_key, signing_input)
-        validate_key(sha_bits, shared_key)
         Util.constant_time_compare?(mac, sign(sha_bits, shared_key, signing_input))
       end
 

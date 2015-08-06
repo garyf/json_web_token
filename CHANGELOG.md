@@ -1,5 +1,15 @@
 ## Changelog
 
+### v0.2.2 (2015-08-06)
+
+* enhancements
+  * RsaUtil to read keys from pem files
+
+### v0.2.1 (2015-08-03)
+
+* enhancements
+  * Rsa#validate\_message\_size
+
 ### v0.2.0 (2015-08-02)
 
 * backward incompatible changes
