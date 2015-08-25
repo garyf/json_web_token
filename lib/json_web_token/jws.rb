@@ -46,17 +46,18 @@ module JsonWebToken
     # @param algorithm [String] 'alg' header parameter value for JWS
     # @param key [String | OpenSSL::PKey::RSA | OpenSSL::PKey::EC] key used to verify
     #   a digital signature, or mac
-    # @return [String | Boolean] a JWS if the mac verifies, or +false+ otherwise
+    # @return [Hash] +{ok: <the jws string>}+ if the mac verifies,
+    #   or +{error: 'invalid'}+ otherwise
     # @example
     #   jws = 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'
     #   key = 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C'
     #   Jws.verify(jws, 'HS256', key)
-    #   # => 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'
+    #   # => {ok: 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'}
     # @see http://tools.ietf.org/html/rfc7515#page-16
     def verify(jws, algorithm, key = nil)
-      compare_alg(jws, algorithm)
-      return jws if algorithm == 'none'
-      signature_verify?(jws, algorithm, key) ? jws : false
+      validate_alg_match(jws, algorithm)
+      return {ok: jws} if algorithm == 'none'
+      signature_verify?(jws, algorithm, key) ? {ok: jws} : {error: 'invalid'}
     end
 
     def alg_parameter(header)
@@ -73,7 +74,7 @@ module JsonWebToken
     end
 
     # http://tools.ietf.org/html/rfc7515#section-4.1.1
-    def compare_alg(jws, algorithm)
+    def validate_alg_match(jws, algorithm)
       header = decoded_header_json_to_hash(jws)
       unless alg_parameter(header) == algorithm
         fail("Algorithm not matching 'alg' header parameter")
@@ -95,7 +96,7 @@ module JsonWebToken
     private_class_method :alg_parameter,
       :encode_input,
       :signature,
-      :compare_alg,
+      :validate_alg_match,
       :decoded_header_json_to_hash,
       :signature_verify?
   end

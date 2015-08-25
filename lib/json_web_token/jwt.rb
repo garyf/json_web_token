@@ -34,17 +34,17 @@ module JsonWebToken
 
     # @param jwt [String] a JSON Web Token
     # @param options [Hash] specify the desired verifying algorithm and verifying key
-    # @return [Hash] a JWT claims set if the jwt verifies, or +error: 'Invalid'+ otherwise
+    # @return [Hash] +{ok: <the jwt claims set hash>}+ if the jwt verifies,
+    #   or +{error: 'Invalid'}+ otherwise
     # @example
     #   jwt = 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'
     #   options = {alg: 'HS256', key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C'}
     #   Jwt.verify(jwt, options)
-    #   # => {iss: 'joe', exp: 1300819380, :'http://example.com/is_root' => true}
+    #   # => {ok: {iss: 'joe', exp: 1300819380, :'http://example.com/is_root' => true}}
     # @see see http://tools.ietf.org/html/rfc7519#section-7.2
     def verify(jwt, options)
       alg = options[:alg] || ALG_DEFAULT
-      jws = Jws.verify(jwt, alg, options[:key])
-      jws ? Util.symbolize_keys(decoded_message_json_to_hash jws) : {error: 'invalid'}
+      payload(Jws.verify(jwt, alg, options[:key]))
     end
 
     def validated_message(claims)
@@ -62,15 +62,22 @@ module JsonWebToken
       alg && !alg.empty? ? hsh : {}
     end
 
-    def decoded_message_json_to_hash(jws)
-      ary = jws.split('.')
-      return jws unless ary.length > 1 # invalid
-      JSON.parse(Format::Base64Url.decode ary[1])
+    def payload(hsh)
+      return {error: 'invalid'} if hsh[:error]
+      ary = hsh[:ok].split('.')
+      return {error: 'invalid JWS'} unless ary.length > 1
+      encoded_claims = ary[1]
+      {ok: payload_to_hash(encoded_claims)}
+    end
+
+    def payload_to_hash(encoded_claims)
+      Util.symbolize_keys(JSON.parse(Format::Base64Url.decode encoded_claims))
     end
 
     private_class_method :validated_message,
       :config_header,
       :alg_parameter_required,
-      :decoded_message_json_to_hash
+      :payload,
+      :payload_to_hash
   end
 end

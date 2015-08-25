@@ -64,9 +64,9 @@ jwt = JsonWebToken.sign({foo: 'bar'}, alg: 'none')
 
 ### JsonWebToken.verify(jwt, options)
 
-Returns either:
-* a JWT claims set string or hash, if the Message Authentication Code (MAC), or signature, is verified
-* a hash, error: 'invalid', otherwise
+Returns a hash:
+* \{ok: < JWT claims set >\}, if the Message Authentication Code (MAC), or signature, is verified
+* \{error: 'invalid'\}, otherwise
 
 `jwt` (required) is a JSON web token string
 
@@ -83,7 +83,7 @@ require 'json_web_token'
 secure_jwt_example = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt.cGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
 
 # verify with default algorithm, HMAC SHA256
-claims = JsonWebToken.verify(secure_jwt_example, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
+\{ok: claims\} = JsonWebToken.verify(secure_jwt_example, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
 
 # verify with RSA SHA256 algorithm
 opts = {
@@ -91,12 +91,12 @@ opts = {
   key: < RSA public key >
 }
 
-claims = JsonWebToken.verify(jwt, opts)
+\{ok: claims\} = JsonWebToken.verify(jwt, opts)
 
 # unsecured token (algorithm is 'none')
 unsecured_jwt_example = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt.'
 
-claims = JsonWebToken.verify(unsecured_jwt_example, alg: 'none')
+\{ok: claims\} = JsonWebToken.verify(unsecured_jwt_example, alg: 'none')
 
 ```
 ### Supported encryption algorithms

@@ -8,7 +8,7 @@ module JsonWebToken
       shared_examples_for 'does #verify' do
         it 'w a claims set' do
           jwt = Jwt.sign(claims, sign_options)
-          expect(Jwt.verify jwt, verify_options).to include(claims)
+          expect(Jwt.verify(jwt, verify_options)[:ok]).to include(claims)
         end
       end
 
@@ -61,7 +61,7 @@ module JsonWebToken
 
         describe 'w/o key w default header alg' do
           it 'raises' do
-            expect { JsonWebToken.sign(claims, {}) }
+            expect { Jwt.sign(claims, {}) }
               .to raise_error(RuntimeError, 'Invalid shared key')
           end
         end
@@ -88,7 +88,7 @@ module JsonWebToken
               jwt = Jwt.sign(claims, sign_options)
 
               verify_options = {alg: algorithm, key: public_key}
-              expect(Jwt.verify jwt, verify_options).to include(claims)
+              expect(Jwt.verify(jwt, verify_options)[:ok]).to eql claims
 
               expect(plausible_message_signature? jwt, 64).to be true
             end
@@ -102,7 +102,7 @@ module JsonWebToken
               let(:verify_options) { {alg: 'none'} }
               it 'verifies a plausible unsecured jws' do
                 jwt = Jwt.sign(claims, sign_options)
-                expect(Jwt.verify jwt, verify_options).to include(claims)
+                expect(Jwt.verify(jwt, verify_options)[:ok]).to include(claims)
                 expect(plausible_unsecured_message? jwt).to be true
               end
             end

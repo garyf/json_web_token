@@ -20,12 +20,13 @@ module JsonWebToken
   
   # @param jwt [String] a JSON Web Token
   # @param options [Hash] specify the desired verifying algorithm and verifying key
-  # @return [Hash] a JWT claims set if the jwt verifies, or +error: 'Invalid'+ otherwise
+  # @return [Hash] +{ok: < the jwt claims set hash >}+ if the jwt verifies,
+  #   or +{error: 'Invalid'}+ otherwise
   # @example
   #   jwt = 'eyJhbGciOiJIUzI1NiJ9.cGF5bG9hZA.uVTaOdyzp_f4mT_hfzU8LnCzdmlVC4t2itHDEYUZym4'
   #   options = {alg: 'HS256', key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C'}
   #   JsonWebToken.verify(jwt, options)
-  #   # => {iss: 'joe', exp: 1300819380, :'http://example.com/is_root' => true}
+  #   # => {ok: {iss: 'joe', exp: 1300819380, :'http://example.com/is_root' => true}}
   def verify(jwt, options)
     Jwt.verify(jwt, options)
   end

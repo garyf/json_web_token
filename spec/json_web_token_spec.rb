@@ -6,7 +6,7 @@ describe JsonWebToken do
     shared_examples_for 'w #verify' do
       it 'w a claims set' do
         jwt = JsonWebToken.sign(claims, sign_options)
-        expect(JsonWebToken.verify jwt, verify_options).to include(claims)
+        expect(JsonWebToken.verify(jwt, verify_options)[:ok]).to include(claims)
       end
     end
 

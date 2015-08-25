@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.3.0 (2015-08-25)
+
+* backward incompatible changes
+  * JsonWebToken, Jwt, and Jws #verify return values
+
 ### v0.2.2 (2015-08-06)
 
 * enhancements

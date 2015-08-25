@@ -9,7 +9,7 @@ module JsonWebToken
         shared_examples_for 'does #verify' do
           it 'w a jws' do
             jws = Jws.sign(header, payload, signing_key)
-            expect(Jws.verify jws, algorithm, verifying_key).to eql jws
+            expect(Jws.verify jws, algorithm, verifying_key).to include({ok: jws})
           end
         end
 
@@ -23,17 +23,17 @@ module JsonWebToken
               it_behaves_like 'does #verify'
 
               describe 'w/o passing key to #verify' do
-                it 'returns false' do
+                it 'returns error' do
                   jws = Jws.sign(header, payload, signing_key)
-                  expect(Jws.verify jws, algorithm, nil).to be false
+                  expect(Jws.verify jws, algorithm, nil).to include({error: 'invalid'})
                 end
               end
 
               describe 'w passing a changed key to #verify' do
                 let(:changed_key) { 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9Z' }
-                it 'returns false' do
+                it 'returns error' do
                   jws = Jws.sign(header, payload, signing_key)
-                  expect(Jws.verify jws, algorithm, changed_key).to be false
+                  expect(Jws.verify jws, algorithm, changed_key).to include({error: 'invalid'})
                 end
               end
             end
@@ -59,7 +59,7 @@ module JsonWebToken
               public_key = EcdsaKey.public_key_new('256', public_key_str)
 
               jws = Jws.sign(header, payload, private_key)
-              expect(Jws.verify jws, algorithm, public_key).to eql jws
+              expect(Jws.verify jws, algorithm, public_key).to include({ok: jws})
             end
           end
         end
@@ -91,7 +91,7 @@ module JsonWebToken
             let(:algorithm) { 'none' }
             it 'w a jws' do
               jws = Jws.unsecured_message(header, payload)
-              expect(Jws.verify jws, algorithm).to eql jws
+              expect(Jws.verify jws, algorithm).to include({ok: jws})
             end
           end
 
