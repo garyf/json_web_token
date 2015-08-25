@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.3.1 (2015-08-25)
+
+* bug fix
+  * README escaping removed
+
 ### v0.3.0 (2015-08-25)
 
 * backward incompatible changes
