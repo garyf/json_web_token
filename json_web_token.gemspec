@@ -1,21 +1,36 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'json_web_token/version'
 
 Gem::Specification.new do |s|
-  s.author = 'Gary Fleshman'
-  s.email = 'gfleshman@newforge-tech.com'
-  s.files = `git ls-files`.split("\n")
-  s.homepage = 'https://github.com/garyf/json_web_token'
-  s.name = 'json_web_token'
+  s.name          = 'json_web_token'
+  s.version       = JsonWebToken::VERSION
+  s.authors       = ['Gary Fleshman']
+  s.email         = ['gfleshman@newforge-tech.com']
+
+  s.summary       = 'JSON Web Token (JWT) for Ruby'
+  s.description   = 'Ruby implementation of the JSON Web Token (JWT) standard, RFC 7519'
+  s.homepage      = 'https://github.com/garyf/json_web_token'
+  s.license       = 'MIT'
+
+  s.files         = `git ls-files -z`.split("\x0").reject do |f|
+    f.match(%r{^(test|spec|features)/})
+  end
+
+  s.require_paths = ['lib']
+
   s.platform = Gem::Platform::RUBY
-  s.summary = 'JSON Web Token (JWT) for Ruby'
-  s.version = JsonWebToken::VERSION
-  # recommended
-  s.license = 'MIT'
-  # optional
-  s.add_runtime_dependency 'json', '~> 1.8', '>= 1.8.3'
-  s.add_development_dependency 'rspec', '~> 3.3'
-  s.description = 'Ruby implementation of the JSON Web Token (JWT) standard, RFC 7519'
   s.required_ruby_version = '>= 2.0.0'
+
+  s.add_runtime_dependency 'json', '~> 1.8', '>= 1.8.3'
+
+  s.add_development_dependency 'bundler', '~> 1.13'
+  s.add_development_dependency 'rake', '~> 10.0'
+  s.add_development_dependency 'rspec', '~> 3.0'
+  s.add_development_dependency 'pry', '~> 0.10'
+  s.add_development_dependency 'pry-byebug', '~> 3.4'
+  s.add_development_dependency 'simplecov', '~> 0.12'
+  s.add_development_dependency 'yard', '~> 0.9'
+  s.add_development_dependency 'wwtd', '~> 1.3'
 end
