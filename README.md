@@ -28,6 +28,16 @@ Token authentication of API requests to Rails via these prominent gems:
 
 Secure Cross-Origin Resource Sharing ([CORS][cors]) using the [rack-cors][rack-cors] gem
 
+### Support for JWT Registered Claims
+
+Support for the standard registered claims documented
+in [RFC 7519][rfc7519] can be found in the companion gem [jwt_claims](https://github.com/garyf/jwt_claims).
+
+`jwt_claims` is a wrapper around `json_web_token` and provides support
+for the full set of registered claims.
+
+[https://github.com/garyf/jwt_claims](https://github.com/garyf/jwt_claims)
+
 ## Usage
 
 ### JsonWebToken.sign(claims, options)
