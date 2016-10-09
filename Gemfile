@@ -1,7 +1,4 @@
 source 'https://rubygems.org'
 
+# Specify your gem's dependencies in json_web_token.gemspec
 gemspec
-
-gem 'pry-byebug', '~> 3.1', require: false
-gem 'simplecov', '~> 0.10', require: false
-gem 'yard', '~> 0.8', require: false

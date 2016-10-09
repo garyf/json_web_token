@@ -28,6 +28,16 @@ Token authentication of API requests to Rails via these prominent gems:
 
 Secure Cross-Origin Resource Sharing ([CORS][cors]) using the [rack-cors][rack-cors] gem
 
+### Support for JWT Registered Claims
+
+Support for the standard registered claims documented
+in [RFC 7519][rfc7519] can be found in the companion gem [jwt_claims](https://github.com/garyf/jwt_claims).
+
+`jwt_claims` is a wrapper around `json_web_token` and provides support
+for the full set of registered claims.
+
+[https://github.com/garyf/jwt_claims](https://github.com/garyf/jwt_claims)
+
 ## Usage
 
 ### JsonWebToken.sign(claims, options)
@@ -46,10 +56,11 @@ Example
 ```ruby
 require 'json_web_token'
 
-# sign with default algorithm, HMAC SHA256
+# Sign with the default algorithm, HMAC SHA256
 jwt = JsonWebToken.sign({foo: 'bar'}, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
+#=> "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmb28iOiJiYXIifQ.vpaYTGkypBmxDi3KZYcvpqLx9xqhRD-DSXONGrUbf5Q"
 
-# sign with RSA SHA256 algorithm
+# Sign with RSA SHA256 algorithm
 opts = {
   alg: 'RSA256',
   key: < RSA private key >
@@ -57,7 +68,7 @@ opts = {
 
 jwt = JsonWebToken.sign({foo: 'bar'}, opts)
 
-# unsecured token (algorithm is 'none')
+# Create an unsecured token (algorithm is 'none')
 jwt = JsonWebToken.sign({foo: 'bar'}, alg: 'none')
 
 ```
@@ -80,10 +91,13 @@ Example
 ```ruby
 require 'json_web_token'
 
-secure_jwt_example = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt.cGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk'
+jwt = JsonWebToken.sign({foo: 'bar'}, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
+#=> "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmb28iOiJiYXIifQ.vpaYTGkypBmxDi3KZYcvpqLx9xqhRD-DSXONGrUbf5Q"
 
-# verify with default algorithm, HMAC SHA256
-{ok: claims} = JsonWebToken.verify(secure_jwt_example, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
+# Verify with default algorithm, HMAC SHA256
+# Returns a hash of `{:ok, verified_claims}`
+JsonWebToken.verify(jwt, key: 'gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr9C')
+#=> {:ok=>{:foo=>"bar"}}
 
 # verify with RSA SHA256 algorithm
 opts = {
@@ -93,12 +107,14 @@ opts = {
 
 {ok: claims} = JsonWebToken.verify(jwt, opts)
 
-# unsecured token (algorithm is 'none')
-unsecured_jwt_example = 'eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt.'
+# Unsecured token (algorithm is 'none')
+jwt = JsonWebToken.sign({foo: 'bar'}, alg: 'none')
+#=> "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJmb28iOiJiYXIifQ."
 
-{ok: claims} = JsonWebToken.verify(unsecured_jwt_example, alg: 'none')
-
+JsonWebToken.verify(jwt, alg: 'none')
+#=> {:ok=>{:foo=>"bar"}}
 ```
+
 ### Supported encryption algorithms
 
 alg Param Value | Digital Signature or MAC Algorithm
