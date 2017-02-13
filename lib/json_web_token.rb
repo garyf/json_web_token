@@ -33,4 +33,4 @@ module JsonWebToken
 end
 
 # alias
-JWT = JsonWebToken
+JWT = JsonWebToken unless ENV['RUBY_GEM_JSON_WEB_TOKEN_SKIP_ALIAS']
