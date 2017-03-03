@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.3.4 (2017-03-02)
+
+* Enhancements
+  * Alias `JWT` for `JsonWebToken` can be turned off with `RUBY_GEM_JSON_WEB_TOKEN_SKIP_ALIAS` environment variable
+
 ### v0.3.3 (2017-01-16)
 
 * Bug fixes
