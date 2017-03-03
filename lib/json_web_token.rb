@@ -17,7 +17,7 @@ module JsonWebToken
   def sign(claims, options)
     Jwt.sign(claims, options)
   end
-  
+
   # @param jwt [String] a JSON Web Token
   # @param options [Hash] specify the desired verifying algorithm and verifying key
   # @return [Hash] +{ok: < the jwt claims set hash >}+ if the jwt verifies,
