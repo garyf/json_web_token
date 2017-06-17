@@ -21,15 +21,15 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = '>= 2.2.0'
 
-  s.add_runtime_dependency 'json', '~> 2.0'
+  s.add_runtime_dependency 'json', '~> 2.1'
 
-  s.add_development_dependency 'bundler', '~> 1.13'
-  s.add_development_dependency 'rake', '~> 10.0'
-  s.add_development_dependency 'rspec', '~> 3.0'
+  s.add_development_dependency 'bundler', '~> 1.15'
+  s.add_development_dependency 'rake', '~> 12.0'
+  s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'pry-byebug', '~> 3.4'
-  s.add_development_dependency 'simplecov', '~> 0.12'
+  s.add_development_dependency 'simplecov', '~> 0.14'
   s.add_development_dependency 'yard', '~> 0.9'
   s.add_development_dependency 'wwtd', '~> 1.3'
 end

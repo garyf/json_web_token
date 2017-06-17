@@ -3,7 +3,7 @@ require 'json_web_token/format/asn1'
 
 module JsonWebToken
   module Algorithm
-    # Sign or verify a JSON Web Signature (JWS) structure using EDCSA
+    # Sign or verify a JSON Web Signature (JWS) structure using ECDSA
     # @see http://tools.ietf.org/html/rfc7518#section-3.4
     module Ecdsa
 
@@ -11,7 +11,7 @@ module JsonWebToken
       extend JsonWebToken::Format::Asn1
 
       MAC_BYTE_COUNT = {
-        '256' => 64, # secp256k1
+        '256' => 64, # prime256v1 aka: secp256r1
         '384' => 96, # secp384r1
         '512' => 132 # secp521r1 note difference (not 128) due to using 521-bit integers
       }

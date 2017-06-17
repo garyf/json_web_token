@@ -3,7 +3,7 @@ require 'openssl'
 module EcdsaKey
 
   BUILT_IN_CURVES = {
-    '256' => 'secp256k1',
+    '256' => 'prime256v1',
     '384' => 'secp384r1',
     '512' => 'secp521r1'
   }

@@ -1,5 +1,14 @@
 ## Changelog
 
+### v0.3.5 (2017-06-17)
+
+* Bug fixes
+  * Replace ECDSA curve secp256k1 in spec with prime256v1 (aka secp256r1)
+
+* Enhancements
+  * Remove travis CI for ruby < v2.2
+  * Update gem dependency versions
+
 ### v0.3.4 (2017-03-02)
 
 * Enhancements

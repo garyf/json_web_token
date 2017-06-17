@@ -131,7 +131,7 @@ ES512 | ECDSA using P-521 and SHA-512
 none | No digital signature or MAC performed (unsecured)
 
 ### Supported Ruby Versions
-Ruby 2.1 and up
+Ruby 2.2 and up
 
 ### Limitations
 Future implementation may include these features:
